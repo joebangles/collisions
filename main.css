@@ -1,0 +1,26 @@
+.circle {
+    position: absolute;
+    width: 10vh;
+    height: 10vh;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+}
+.red {
+    background: red;
+}
+.blue {
+    background: blue;
+}
+.green {
+    background: green;
+}
+#bg{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    background: grey;
+    left: 0px;
+    top: 0px;
+    z-index: -10;
+}

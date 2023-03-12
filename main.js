@@ -1,3 +1,7 @@
+Array.prototype.inverse = function() {
+    return [-this[0], -this[1]]
+}
+
 class Ball {
     constructor(pos, vel, id) {
         this.position = pos;
@@ -25,8 +29,8 @@ class Ball {
 
 var balls = [];
 
-let red_ball = new Ball([20, -44], [50, 0], "red_ball")
-let blue_ball = new Ball([100, -50], [0, 0], "blue_ball")
+let red_ball = new Ball([30, -44], [60, -10], "red_ball")
+let blue_ball = new Ball([100, -60], [-60, 10], "blue_ball")
 
 balls.push(red_ball)
 balls.push(blue_ball)
@@ -43,6 +47,10 @@ function deltaT() {
     return toReturn;
 }
 
+function dot(u, v) {
+    return u[0]*v[0] + u[1]*v[1]
+}
+
 function updatePos() {
 
     let delta = deltaT()
@@ -55,17 +63,22 @@ function updatePos() {
                 console.log("collision")
                 ball1.colliding = ball2.colliding = true;
 
-                let contact = [ball2.position[0] - ball1.position[0], ball2.position[1] - ball1.position[1]]
-                let velo = [...ball1.velocity]
-
+                let contact = [ball1.position[0] - ball2.position[0], ball1.position[1] - ball2.position[1]]
+                let velo1 = [...ball1.velocity]
+                let velo2 = [...ball2.velocity]
+                let deltaV = [velo1[0] - velo2[0], velo1[1] - velo2[1]]
                 let norm = Math.sqrt(contact[0]**2 + contact[1]**2)
-                let dotted = (contact[0] * velo[0] + contact[1] * velo[1])/norm
+                console.log("v1: "+  velo1 + " v2: " + velo2 + " contact: " + contact)
+                console.log(ball1.element.id + ": " + ball1.velocity + " " + ball2.element.id + ": " + ball2.velocity)
+                console.log("cont: " + contact + " inverse: " + contact.inverse())
 
-                ball2.velocity = [dotted * contact[0]/norm, dotted * contact[1]/norm]
-                ball1.velocity = [ball1.velocity[0] - ball2.velocity[0], ball1.velocity[1] - ball2.velocity[1]]
-
-
-                console.log([ball1.velocity[0] + ball2.velocity[0],ball1.velocity[1] + ball2.velocity[1]])
+                ball1.velocity = [
+                    ball1.velocity[0] - (dot(deltaV, contact) * contact[0]) / (norm**2),
+                    ball1.velocity[1] - (dot(deltaV, contact) * contact[1]) / (norm**2)]
+                ball2.velocity = [
+                    ball2.velocity[0] - (dot(deltaV.inverse(), contact.inverse()) * contact.inverse()[0]) / (norm**2),
+                    ball2.velocity[1] - (dot(deltaV.inverse(), contact.inverse()) * contact.inverse()[1]) / (norm**2)]
+                console.log(ball1.element.id + ": " + ball1.velocity + " " + ball2.element.id + ": " + ball2.velocity)
             } else {
                 ball1.colliding = ball2.colliding = false;
             }
